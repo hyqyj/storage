@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>hello-chat</title>
+	<link rel="icon" type="image/png" href="https://socket.io/zh-CN/images/logo.svg">
+	<link rel="stylesheet" type="text/css" href="/client.css">
+	<script type="text/javascript" src="/socket.io/socket.io.js"></script>
+	<!-- <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script> -->
+	
+</head>
+<body>
+	<ul id="message"></ul>
+	<form id="form" action="">
+		<input id="input" type="" name="" autocomplete="off" />
+		<button>Send</button>
+	</form>
+	<script type="text/javascript">
+	var socket = io('http://192.168.0.104:3000')
+	socket.emit('to-server', "hello my server")
+	var user = socket.on('user', (data) => {
+		document.cookie = `name=${data}`
+		console.log(user)
+		/*name = document.cookie.split(';')[1].split('=')[1];*/
+		document.cookie = `name=''`;
+		return data
+	});
+	var button = true
+	
+	var form = document.getElementById('form').addEventListener('submit', (e) =>{
+
+		e.preventDefault();
+		if(input.value){
+			var item = document.createElement('div');
+			item.id = 'me';
+			var us = document.createElement('div');
+			us.id = 'us';
+			var client = document.createElement('div');
+			client.id = 'bc';
+			us.textContent = "User yousife"
+			client.textContent = input.value;
+			message.appendChild(item);
+			item.appendChild(us);
+			us.appendChild(client);
+			button = false
+			window.scrollTo(0,document.body.scrollHeight);
+			socket.emit('chat message', input.value);
+			input.value = '';
+		}
+	});
+	var input = document.getElementById('input');
+
+	socket.on('chat message', (data) => {
+		if (button){
+			var item = document.createElement('div');
+			item.id = 'other';
+			var us = document.createElement('div');
+			us.id = 'us';
+			var client = document.createElement('div');
+			client.id = 'oc';
+			console.log(data)
+			us.textContent = 'User '+data.user
+			client.textContent = data.data;
+			message.appendChild(item);
+			item.appendChild(us);
+			us.appendChild(client);
+			window.scrollTo(0,document.body.scrollHeight);
+		}else{
+			button = true
+		}})
+
+</script>
+</body>
+</html>
